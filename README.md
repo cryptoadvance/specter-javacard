@@ -115,12 +115,15 @@ Compatibility table: https://www.fi.muni.cz/~xsvenda/jcalgtest/table.html
 
 `ALG_EC_PACE_GM` is a nice one - allows point addition. AFAIK available only on NXP JCOP3 J3H145 and NXP JCOP4 series.
 
-`TYPE_EC_FP_PRIVATE_TRANSIENT` - useful for bip32 derivation
-Infineon SLE78 JCard, G&D Smartcafe 7.0, NXP JCOP4 P71D321, NXP JCOP4 J3R200
-Taisys SIMoME Vault
+`TYPE_EC_FP_PRIVATE_TRANSIENT` - useful for bip32 derivation.
+Available on: 
+- Infineon SLE78 JCard
+- G&D Smartcafe 7.0
+- NXP JCOP4 P71D321
+- NXP JCOP4 J3R200
+- Taisys SIMoME Vault
 
-`ALG_HMAC_SHA512` - useful for fast PBKDF2 in BIP-39
-Taisys SIMoME Vault
+`ALG_HMAC_SHA512` - useful for fast PBKDF2 in BIP-39. Available only on Taisys SIMoME Vault
 
 # Don't write your own crypto
 

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="all" name="JavaCardPlayground build">
+  <!-- Applet building dependencies -->
+  <property name="JC211" value="sdks/jc211_kit"/>
+  <property name="JC212" value="sdks/jc212_kit"/>
+  <property name="JC221" value="sdks/jc221_kit"/>
+  <property name="JC222" value="sdks/jc222_kit"/>
+  <property name="JC303" value="sdks/jc303_kit"/>
+  <property name="JC304" value="sdks/jc304_kit"/>
+  <property name="JC305" value="sdks/jc305u3_kit"/>
+  <property name="JCKIT" value="${JC304}"/>
+
+  <property name="src.dir"    value="src/main/java"/>
+  <property name="build.dir"  value="build"/>
+  <property name="cap.dir"    value="${build.dir}/cap"/>
+  <property name="class.dir"  value="${build.dir}/classes"/>
+  <property name="exp.dir"    value="${build.dir}/exp"/>
+  <property name="deps.crypto" value="Crypto*,HMAC*,Secp*,Transient*,Finite*"/>
+  <property name="deps.secureapplet" value="Secure*,${deps.crypto},PinCode.java"/>
+
+  <!-- ant-javacard task from javacard.pro -->
+  <taskdef name="javacard" classname="pro.javacard.ant.JavaCard" classpath="ant-javacard.jar"/>
+  <!-- All included applets -->
+  <target name="Teapot" depends="init">
+    <javacard jckit="${JCKIT}">
+      <cap output="${cap.dir}/TeapotApplet.cap" 
+           sources="${src.dir}/toys"
+           classes="${class.dir}/Teapot"
+           includes="TeapotApplet.java,DataEntry.java"
+      >
+        <applet class="toys.TeapotApplet"       aid="B00B5111CA01"/>
+      </cap>
+    </javacard>
+  </target>
+  <target name="SecureApplet" depends="init">
+    <javacard jckit="${JCKIT}">
+      <cap output="${cap.dir}/SecureApplet.cap" 
+           sources="${src.dir}/toys" 
+           classes="${class.dir}/SecureApplet"
+           includes="${deps.secureapplet}"
+           >
+        <applet class="toys.SecureApplet"       aid="B00B5111FF01"/>
+      </cap>
+    </javacard>
+  </target>
+  <target name="MemoryCard" depends="init">
+    <javacard jckit="${JCKIT}">
+      <cap output="${cap.dir}/MemoryCardApplet.cap" 
+           sources="${src.dir}/toys"
+           classes="${class.dir}/MemoryCard"
+           includes="${deps.secureapplet},DataEntry.java,MemoryCardApplet.java"
+        >
+        <applet class="toys.MemoryCardApplet"   aid="B00B5111CB01"/>
+      </cap>
+    </javacard>
+  </target>
+  <target name="SingleUseKey" depends="init">
+    <javacard jckit="${JCKIT}">
+      <cap output="${cap.dir}/SingleUseKeyApplet.cap"
+           sources="${src.dir}/toys"
+           classes="${class.dir}/SingleUseKey"
+           includes="${deps.secureapplet},SingleUseKeyApplet.java"
+      >
+        <applet class="toys.SingleUseKeyApplet" aid="B00B5111CD01"/>
+      </cap>
+    </javacard>
+  </target>
+  <target name="BlindOracle" depends="init">
+    <javacard jckit="${JCKIT}">
+      <cap output="${cap.dir}/BlindOracleApplet.cap"
+           sources="${src.dir}/toys"
+           classes="${class.dir}/BlindOracle"
+           includes="${deps.secureapplet},BlindOracleApplet.java"
+      >
+        <applet class="toys.BlindOracleApplet"  aid="B00B5111CE01"/>
+      </cap>
+    </javacard>
+  </target>
+  <target name="Bundle" depends="init">
+    <javacard jckit="${JCKIT}">
+      <cap output="${cap.dir}/Bundle.cap" sources="${src.dir}/toys" classes="${class.dir}/Bundle">
+        <applet class="toys.TeapotApplet"       aid="B00B5111CF01"/>
+        <applet class="toys.SecureApplet"       aid="B00B5111CF02"/>
+        <applet class="toys.MemoryCardApplet"   aid="B00B5111CF03"/>
+        <applet class="toys.BlindOracleApplet"  aid="B00B5111CF04"/>
+        <applet class="toys.SingleUseKeyApplet" aid="B00B5111CF05"/>
+      </cap>
+    </javacard>
+  </target>
+
+  <target name="all" depends="Teapot,SecureApplet,MemoryCard,SingleUseKey,BlindOracle,Bundle"/>
+
+  <target name="init">
+    <mkdir dir="${build.dir}"/>
+    <mkdir dir="${cap.dir}"/>
+    <mkdir dir="${class.dir}"/>
+  </target>
+
+  <target name="clean">
+    <delete dir="${build.dir}"/>
+  </target>
+
+  <target name="clean-build" depends="clean,all"/>
+
+</project>

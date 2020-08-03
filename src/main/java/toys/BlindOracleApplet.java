@@ -66,7 +66,8 @@ public class BlindOracleApplet extends SecureApplet{
     private static final short CHAINCODE_LEN     = (short)32;
     private static final short PUBKEY_LEN        = (short)33;
     private static final short PRVKEY_LEN        = (short)32;
-    private static final short SEED_LEN          = (short)64;
+    private static final short SEED_LEN_MIN      = (short)16;
+    private static final short SEED_LEN_MAX      = (short)64;
     private static final short MSG_LEN           = (short)32;
     public static final byte[] HDKEY_SEED_KEY    = {'B','i','t','c','o','i','n',' ','s','e','e','d'};
 
@@ -142,14 +143,20 @@ public class BlindOracleApplet extends SecureApplet{
      * 
      * @param seed - buffer with the seed
      * @param seefOff - offset of the seed in the buffer
+     * @param seedLen - length of the seed
      */
-    private void genKeyFromSeed(byte[] seed, short seedOff){
+    private void genKeyFromSeed(byte[] seed, short seedOff, short seedLen){
+        // check it's between 16 and 64 bytes
+        if( (seedLen < SEED_LEN_MIN) || (seedLen > SEED_LEN_MAX))
+        {
+            ISOException.throwIt(ERR_INVALID_LEN);
+        }
         // set depth, child number and fingerprint to zero
         short len = (short)64;
         short off = heap.allocate(len);
         // do hmac_sha512("Bitcoin seed", seed)
         Crypto.hmacSha512.init(HDKEY_SEED_KEY, (short)0, (short)(HDKEY_SEED_KEY.length));
-        Crypto.hmacSha512.doFinal(seed, seedOff, SEED_LEN, heap.buffer, off);
+        Crypto.hmacSha512.doFinal(seed, seedOff, seedLen, heap.buffer, off);
         // copy first 32 bytes to private key
         Util.arrayCopyNonAtomic(heap.buffer, off, rootPrv, (short)0, PRVKEY_LEN);
         // copy last 32 bytes to chain code
@@ -177,12 +184,9 @@ public class BlindOracleApplet extends SecureApplet{
         switch (subcmd){
             // set key from seed
             case SUBCMD_ROOT_SET_SEED:
-                // check it's 64 bytes
-                if(len!=(short)(SEED_LEN+LENGTH_CMD_SUBCMD)){
-                    ISOException.throwIt(ERR_INVALID_LEN);
-                }
                 // copy to defaulSeed
-                genKeyFromSeed(buf, OFFSET_SECURE_PAYLOAD);
+                genKeyFromSeed(buf, OFFSET_SECURE_PAYLOAD,
+                               (short)(len-LENGTH_CMD_SUBCMD));
                 Util.arrayCopyNonAtomic(rootXpub, (short)0,
                                         buf, OFFSET_SECURE_PAYLOAD,
                                         BIP32_LEN);

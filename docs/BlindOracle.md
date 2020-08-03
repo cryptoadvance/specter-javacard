@@ -28,13 +28,13 @@ Loads or generates the root key on the card.
 
 ### Set seed
 
-Calculates root key from bip32 seed (64 bytes)
+Calculates root key from bip32 seed (16-64 bytes)
 
 | Field  | Value                                    |
 | ------ | ---------------------------------------- |
 | CMD    | `0x10`                                   |
 | SUBCMD | `0x00`                                   |
-| DATA   | 64-byte seed                             |
+| DATA   | 16-64 byte seed                          |
 | RETURN | Responce code: `0x9000`, `DATA`: root xpub: `<chain_code><pubkey>` |
 
 ### Set root key

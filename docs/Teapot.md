@@ -6,13 +6,13 @@ By default the phrase is `I am a teapot gimme some tea plz`.
 
 Maximum storage size - `254` bytes.
 
-## APDUs
+# APDUs
 
 Applet ID: `B00B5111CA01`
 
 To select the applet use `SELECT` APDU: `00A4040006B00B5111CA0100`
 
-### Get data
+## Get data
 
 | Field  | Value                                    |
 | ------ | ---------------------------------------- |
@@ -24,7 +24,7 @@ To select the applet use `SELECT` APDU: `00A4040006B00B5111CA0100`
 
 Example: `B0A10000` -> returns stored data
 
-### Store data
+## Store data
 
 | Field  | Value                                    |
 | ------ | ---------------------------------------- |

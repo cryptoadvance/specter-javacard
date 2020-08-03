@@ -2,13 +2,13 @@
 
 Can store arbitrary sequence of bytes up to `220` bytes. It is enough to store bip39 recovery phrase (max word length in bip39 is 8 letters, 24 words max + spaces), bip32 seed or root xprv.
 
-## APDUs
+# APDUs
 
 Applet ID: `B00B5111CB01`
 
 To select applet use `SELECT` APDU: `00A4040006B00B5111CB0100`
 
-## SC commands
+# SC commands
 
 We encode data in secure message in the following form:
 
@@ -30,7 +30,7 @@ Commands marked with `PIN protected` can be used only if the card is unlocked.
 
 All commands defined in the [`SecureApplet`](./SecureApplet.md) are available. On top of that we have two more commands:
 
-### Get data
+## Get data
 
 **PIN protected** - the card should be unlocked first.
 
@@ -43,7 +43,7 @@ Simple command that sends back the same responce. Useful to test secure communic
 | DATA   | ignored                                  |
 | RETURN | Responce code: `0x9000`, `DATA`: data stored on the card |
 
-### Store data
+## Store data
 
 **PIN protected** - the card should be unlocked first.
 

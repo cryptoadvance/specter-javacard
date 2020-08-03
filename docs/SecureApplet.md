@@ -2,9 +2,9 @@
 
 A base class used by all applets in this repo. Provides PIN code and secure communication functionalities. Most commands of the applets are only accessible over secure channel.
 
-## APDUs
+# APDUs
 
-### Unsecure Get Random
+## Unsecure Get Random
 
 Plaintext command. Provides 32 random bytes to the host.
 
@@ -18,7 +18,7 @@ Plaintext command. Provides 32 random bytes to the host.
 
 Example: `B0B10000` -> returns 32 random bytes
 
-### Get card's static public key
+## Get card's static public key
 
 This key is generated when the applet is installed. It will remain the same whenever you insert the card, but when applet is updated it will be re-generated.
 
@@ -38,7 +38,7 @@ This APDU returns 65-byte sequence with serialized uncompressed public key (`0x0
 
 Example: `B0B20000` -> returns 65 bytes with static public key of the card, for example `045879312CB80C51B6FF53EF946603E64CCA37C9E06D96E7FB7BB798F822117D89FB537A4F53EA59802946AB4532BCD403EFA20518360411C262C010B1A496B39C`.
 
-### Establish secure channel
+## Establish secure channel
 
 For secure communication we need to establish shared secrets. For this we use ECDH key agreement. We use `AES_CBC` for encryption with `M2` padding (add `0x8000..00` to round to 16-byte blocks). HMAC-SHA256 is used for authentication and applied to the ciphertext (encrypt-then-hmac).
 
@@ -58,7 +58,7 @@ When secure channel is established `iv` for the `AES` cypher is set to `0` and i
 
 If you are out of sync for some reason just re-establish secure channel. If `iv` is hitting the limit of 16 bytes - also re-establish secure channel.
 
-### Establish secure channel in SS mode
+## Establish secure channel in SS mode
 
 Returns `< 32-byte card nonce > | HMAC-SHA256(card_key, data) | ECDSA_SIGNATURE`.
 
@@ -70,7 +70,7 @@ Returns `< 32-byte card nonce > | HMAC-SHA256(card_key, data) | ECDSA_SIGNATURE`
 | DATA   | `<host_pubkey><host_nonce>`: 65-byte public key of the host serialized in uncompressed form followed by the 32-byte host nonce |
 | RETURN | `SW`: `0x9000`, `DATA`: `< 32-byte card nonce > | HMAC-SHA256(card_key, data) | ECDSA_SIGNATURE`  |
 
-### Establish secure channel in ES mode
+## Establish secure channel in ES mode
 
 Returns `< 32-byte card nonce > | HMAC-SHA256(card_key, data) | ECDSA_SIGNATURE`.
 
@@ -82,7 +82,7 @@ Returns `< 32-byte card nonce > | HMAC-SHA256(card_key, data) | ECDSA_SIGNATURE`
 | DATA   | 65-byte public key of the host serialized in uncompressed form |
 | RETURN | `SW`: `0x9000`, `DATA`: `< 32-byte card nonce > | HMAC-SHA256(card_key, data) | ECDSA_SIGNATURE` |
 
-### Establish secure channel in EE mode
+## Establish secure channel in EE mode
 
 Returns `< card ephemeral pubkey > | HMAC-SHA256(card_key, data) | ECDSA_SIG(card_pubkey, data incl HMAC)`.
 
@@ -94,7 +94,7 @@ Returns `< card ephemeral pubkey > | HMAC-SHA256(card_key, data) | ECDSA_SIG(car
 | DATA   | 65-byte public key of the host serialized in uncompressed form |
 | RETURN | `SW`: `0x9000`, `DATA`: 65-byte cards fresh pubkey followed by `HMAC-SHA256(card_key, data)`, then ECDSA signature signing all previous data |
 
-### Secure message
+## Secure message
 
 All commands via secure channel are sent with this APDU. If decryption or authentication check failed the card will throw an error and close the channel. Otherwise it will always return `0x9000`, but inside the payload it will send the actual data or error code.
 
@@ -117,7 +117,7 @@ Message is formed as follows:
 
 Encrypted packet format: `< ciphertext > < hmac_sha256(key, iv|ciphertext)[:15] >`
 
-### Close channel
+## Close channel
 
 Closes secure communication channel. Internally overwrites all session keys with random junk, so nobody will be able to communicate with the card. I have no idea what's the reason to do that...
 
@@ -129,7 +129,7 @@ Closes secure communication channel. Internally overwrites all session keys with
 | DATA   | ignored                                  |
 | RETURN | `SW`: `0x9000`, `DATA`: empty            |
 
-## Secure channel commands
+# Secure channel commands
 
 All secure channel commands are transmitted encrypted and authenticated using a Secure Message APDU.
 
@@ -151,7 +151,7 @@ Error codes are transmitted over secure channel as well. Here are the common err
 | `NOT_INITIALIZED` |`0505` | Card is not set up yet |
 | `PIN_ALREADY_SET` |`0506` | PIN code already exists, unset PIN first |
 
-### Echo
+## Echo
 
 Simple command that sends back the same responce. Useful to test secure communication as the payload is decrypted and re-encrypted on the card.
 
@@ -162,7 +162,7 @@ Simple command that sends back the same responce. Useful to test secure communic
 | DATA   | data to echo                             |
 | RETURN | Responce code: `0x9000`, `DATA`: same as incoming data |
 
-### Get random
+## Get random
 
 Returns 32 bytes of random data over secure channel
 
@@ -173,13 +173,13 @@ Returns 32 bytes of random data over secure channel
 | DATA   | ignored                                  |
 | RETURN | Responce code: `0x9000`, `DATA`: 32 bytes of random data |
 
-### Pin commands
+## Pin commands
 
 PIN code can be any sequence of bytes up to 32 bytes long.
 Number of PIN attempts is limited to 10.
 By default PIN code is not set. Use **Set PIN** command to initialize it.
 
-#### Pin status
+### Pin status
 
 Returns current status of the card, 3 bytes long:
 - Number of attempts left
@@ -197,7 +197,7 @@ Returns current status of the card, 3 bytes long:
 | DATA   | ignored                                  |
 | RETURN | Responce code: `0x9000`, `DATA`: 3-byte status    |
 
-#### Unlock with PIN
+### Unlock with PIN
 
 Unlock the card with the PIN code.
 
@@ -208,7 +208,7 @@ Unlock the card with the PIN code.
 | DATA   | PIN code                                 |
 | RETURN | Responce code: `0x9000` on success, error code otherwise |
 
-#### Lock the card
+### Lock the card
 
 Lock the card.
 
@@ -219,7 +219,7 @@ Lock the card.
 | DATA   | Ignored                                  |
 | RETURN | Responce code: `0x9000` on success, error code otherwise |
 
-#### Change PIN
+### Change PIN
 
 Changes the PIN code. Requires both old and new PIN codes in the payload.
 In this case PIN codes should be encoded as len-value pairs
@@ -231,7 +231,7 @@ In this case PIN codes should be encoded as len-value pairs
 | DATA   | `<len_old><pin_old><len_new><pin_new>`   |
 | RETURN | Responce code: `0x9000` on success, error code otherwise |
 
-#### Set PIN
+### Set PIN
 
 Enables PIN code and sets it to the value in the payload.
 
@@ -242,7 +242,7 @@ Enables PIN code and sets it to the value in the payload.
 | DATA   | PIN code                                 |
 | RETURN | Responce code: `0x9000` on success, error code otherwise |
 
-#### Unset PIN
+### Unset PIN
 
 Disables PIN code. Requires PIN code in the payload.
 

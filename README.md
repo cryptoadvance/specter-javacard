@@ -16,13 +16,13 @@ Currently all the applets are tested on [NXP JCOP3 J3H145 card](https://www.smar
 
 # Toolchain installation
 
-Instructions are for MacOS only at the moment.
-
 JDK8 works. The most recent one doesn't.
 
 Big thanks to https://adoptopenjdk.net/ for all old versions of jdk!
 
 Install deps:
+
+## MacOS
 
 ```sh
 brew tap adoptopenjdk/openjdk
@@ -38,6 +38,19 @@ export PATH="/usr/local/opt/ant@1.9/bin:$PATH"
 export JAVA_HOME="/Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home"
 ```
 
+## Linux
+
+```sh
+sudo apt install openjdk-8-jdk
+sudo apt install ant
+```
+
+Install the smartcard service:
+
+```sh
+sudo apt install pcscd
+```
+
 # Tools
 
 - `gp.jar` - a working and easy to use tool for applets management, by [martinpaljak](https://github.com/martinpaljak/GlobalPlatformPro) (LGPL3)
@@ -51,6 +64,8 @@ alias gp="java -jar $PWD/gp.jar"
 ```
 
 # How to build
+
+Make sure to clone recursively or run `git submodule update --init --recursive` if you have an error "No usable JavaCard SDK referenced"
 
 Run to compile all applets:
 

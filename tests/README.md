@@ -2,9 +2,7 @@
 
 On Linux you need: `sudo apt install swig libpcsclite-dev`
 
-1. Install requirements: `pip3 install -r requirements.txt`
-2. You should have [libsecp256k1](https://github.com/bitcoin-core/secp256k1) installed in the system. For now.
-
+Install requirements: `pip3 install -r requirements.txt`
 
 # Running tests
 

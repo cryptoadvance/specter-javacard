@@ -1,4 +1,4 @@
-import ctypes, os
+import ctypes, os, sys
 import ctypes.util
 
 from ctypes import (
@@ -17,6 +17,12 @@ EC_UNCOMPRESSED = 0b0000000010
 
 def _init(flags = (CONTEXT_SIGN | CONTEXT_VERIFY)):
     library_path = ctypes.util.find_library('libsecp256k1')
+    if library_path is None:
+        CURRENT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)))
+        if sys.platform == 'darwin':
+            library_path = os.path.abspath(os.path.join(CURRENT_DIR, "prebuilt/libsecp256k1.dylib"))
+        else:
+            library_path = os.path.abspath(os.path.join(CURRENT_DIR, "prebuilt/libsecp256k1.so"))
 
     secp256k1 = ctypes.cdll.LoadLibrary(library_path)
 

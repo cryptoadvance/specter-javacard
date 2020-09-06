@@ -14,29 +14,29 @@ public class BlindOracleApplet extends SecureApplet{
     // commands transmitted over secure channel
     // 0x00 - 0x04 are reserved
     // key management
-    private static final byte CMD_ROOT                = (byte)0x10;
+    protected static final byte CMD_ROOT                = (byte)0x10;
     // bip32 keys - derivation and signing
-    private static final byte CMD_BIP32               = (byte)0x11;
+    protected static final byte CMD_BIP32               = (byte)0x11;
 
     /************ key management *********/
 
     // set seed - 64 bytes, 
     // data format: <64 bytes seed>
-    private static final byte SUBCMD_ROOT_SET_SEED    = (byte)0x00;
+    protected static final byte SUBCMD_ROOT_SET_SEED    = (byte)0x00;
     // set xprv - 65 bytes
     // data format: <32-byte chain code><00><32-byte prv>
-    private static final byte SUBCMD_ROOT_SET_KEY     = (byte)0x01;
+    protected static final byte SUBCMD_ROOT_SET_KEY     = (byte)0x01;
     // generate random key
     // WARNING: doesn't return the seed, so it always stays only on this card
     //          add some backup mechanism in a script to recover if card breaks
     // data: ignored
-    private static final byte SUBCMD_ROOT_SET_RANDOM  = (byte)0x7D;
+    protected static final byte SUBCMD_ROOT_SET_RANDOM  = (byte)0x7D;
 
     /************ master private key management *********/
 
     // returns 65-byte root xpub <chain_code><pubkey>
     // data: ignored
-    private static final byte SUBCMD_BIP32_GET_ROOT    = (byte)0x00;
+    protected static final byte SUBCMD_BIP32_GET_ROOT    = (byte)0x00;
     // pass array of 4-byte indexes for derivation path
     // max derivation len is ~50, should be enough in most cases
     // sets result to temporary storage, so you can use it for 
@@ -44,43 +44,42 @@ public class BlindOracleApplet extends SecureApplet{
     // data: <keyid><4-byte index><4-byte index>...<4-byte index>
     // keyid is 00 if derive from root, 01 if derive from current child
     // saves derived key as current (id 01)
-    private static final byte SUBCMD_BIP32_GET_DERIVE   = (byte)0x01;
+    protected static final byte SUBCMD_BIP32_GET_DERIVE   = (byte)0x01;
     // returns an xpub of the key currently stored in memory
-    private static final byte SUBCMD_BIP32_GET_CURRENT  = (byte)0x02;
+    protected static final byte SUBCMD_BIP32_GET_CURRENT  = (byte)0x02;
     // sign using currently derived child key or root key
     // data format: <32-byte message hash>00 to use root key
     //              <32-byte message hash>01 to use current key
-    private static final byte SUBCMD_BIP32_SIGN         = (byte)0x03;
+    protected static final byte SUBCMD_BIP32_SIGN         = (byte)0x03;
     // pass 32-byte hash to sign, then key id 
     // and array of 4-byte indexes for derivation
     // key that is signing is not saved as current
     // data: <32-byte message hash>00<4-byte index>...<4-byte index> for root
     //       <32-byte message hash>01<4-byte index>...<4-byte index> for current
-    private static final byte SUBCMD_BIP32_DERIVE_AND_SIGN = (byte)0x04;
+    protected static final byte SUBCMD_BIP32_DERIVE_AND_SIGN = (byte)0x04;
     // it's not full bip32 key, only chain code and the key 
-    private static final short BIP32_LEN         = (short)65;
-    private static final short CHAINCODE_OFFSET  = (short)0;
-    private static final short PUBKEY_OFFSET     = (short)32;
-    private static final short FLAG_OFFSET       = (short)32;
-    private static final short PRVKEY_OFFSET     = (short)33;
-    private static final short CHAINCODE_LEN     = (short)32;
-    private static final short PUBKEY_LEN        = (short)33;
-    private static final short PRVKEY_LEN        = (short)32;
-    private static final short SEED_LEN_MIN      = (short)16;
-    private static final short SEED_LEN_MAX      = (short)64;
-    private static final short MSG_LEN           = (short)32;
+    protected static final short BIP32_LEN         = (short)65;
+    protected static final short CHAINCODE_OFFSET  = (short)0;
+    protected static final short PUBKEY_OFFSET     = (short)32;
+    protected static final short FLAG_OFFSET       = (short)32;
+    protected static final short PRVKEY_OFFSET     = (short)33;
+    protected static final short CHAINCODE_LEN     = (short)32;
+    protected static final short PUBKEY_LEN        = (short)33;
+    protected static final short PRVKEY_LEN        = (short)32;
+    protected static final short SEED_LEN_MIN      = (short)16;
+    protected static final short SEED_LEN_MAX      = (short)64;
+    protected static final short MSG_LEN           = (short)32;
     public static final byte[] HDKEY_SEED_KEY    = {'B','i','t','c','o','i','n',' ','s','e','e','d'};
 
-    private static final short ERR_INVALID_DATA  = (short)0x0700;
+    protected static final short ERR_INVALID_DATA  = (short)0x0700;
 
-    private boolean isInitialized = false;
-    private byte status = (byte)0;
+    protected boolean isInitialized = false;
     // root key
-    private byte[] rootPrv;
-    private byte[] rootXpub; // 65 bytes, <chain code><pubkey>
+    protected byte[] rootPrv;
+    protected byte[] rootXpub; // 65 bytes, <chain code><pubkey>
     // child key
-    private byte[] childPrv;
-    private byte[] childXpub; // 65 bytes, <chain code><pubkey>
+    protected byte[] childPrv;
+    protected byte[] childXpub; // 65 bytes, <chain code><pubkey>
 
     // Create an instance of the Applet subclass using its constructor, 
     // and to register the instance.
@@ -101,18 +100,10 @@ public class BlindOracleApplet extends SecureApplet{
      */
     public BlindOracleApplet(){
         super();
-        try {
-            rootPrv  = new byte[PRVKEY_LEN];
-            rootXpub = new byte[BIP32_LEN];
-        } catch (Exception e) {
-            status = (byte)1;
-        }
-        try{
-            childPrv = JCSystem.makeTransientByteArray(PRVKEY_LEN, JCSystem.CLEAR_ON_DESELECT);
-            childXpub = JCSystem.makeTransientByteArray(BIP32_LEN, JCSystem.CLEAR_ON_DESELECT);
-        } catch (Exception e) {
-            status = (byte)2;
-        }
+        rootPrv  = new byte[PRVKEY_LEN];
+        rootXpub = new byte[BIP32_LEN];
+        childPrv = JCSystem.makeTransientByteArray(PRVKEY_LEN, JCSystem.CLEAR_ON_DESELECT);
+        childXpub = JCSystem.makeTransientByteArray(BIP32_LEN, JCSystem.CLEAR_ON_DESELECT);
     }
     /**
      * Handles secure message (decrypted by SecureChannel)
@@ -124,9 +115,6 @@ public class BlindOracleApplet extends SecureApplet{
         // you need to unlock the card with the PIN first
         if(isLocked()){
             ISOException.throwIt(ERR_CARD_LOCKED);
-        }
-        if(status > (byte)0){
-            ISOException.throwIt(ERR_INVALID_CMD);
         }
         switch(buf[OFFSET_CMD]){
             case CMD_ROOT:

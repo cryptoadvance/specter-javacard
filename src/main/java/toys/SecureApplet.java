@@ -47,42 +47,42 @@ import javacard.framework.*;
 public class SecureApplet extends Applet{
 
     /** Class code for secure applet */
-    private static final byte SECURE_CLA                      = (byte)0xB0;
+    protected static final byte SECURE_CLA                      = (byte)0xB0;
 
     /** Instruction to get 32 random bytes, without secure channel */
-    private static final byte  INS_GET_RANDOM                 = (byte)0xB1;
+    protected static final byte  INS_GET_RANDOM                 = (byte)0xB1;
 
     /* Secure channel stuff */
     /** Instruction to get static card's public key for ECDH key agreement */
-    private static final byte INS_GET_CARD_PUBKEY             = (byte)0xB2;
+    protected static final byte INS_GET_CARD_PUBKEY             = (byte)0xB2;
     /** Instruction to establish secure channel in ES mode - 
      *  ephemeral key from the host, static key from the card. */
-    private static final byte INS_OPEN_SECURE_CHANNEL_SS_MODE = (byte)0xB3;
+    protected static final byte INS_OPEN_SECURE_CHANNEL_SS_MODE = (byte)0xB3;
     /** Instruction to establish secure channel in ES mode - 
      *  ephemeral keys are used both on the host and on the card. */
-    private static final byte INS_OPEN_SECURE_CHANNEL_ES_MODE = (byte)0xB4;
+    protected static final byte INS_OPEN_SECURE_CHANNEL_ES_MODE = (byte)0xB4;
     /** Instruction to establish secure channel in EE mode - 
      *  ephemeral keys are used both on the host and on the card. */
-    private static final byte INS_OPEN_SECURE_CHANNEL_EE_MODE = (byte)0xB5;
-    private static final byte INS_SECURE_MESSAGE              = (byte)0xB6;
-    private static final byte INS_CLOSE_CHANNEL               = (byte)0xB7;
+    protected static final byte INS_OPEN_SECURE_CHANNEL_EE_MODE = (byte)0xB5;
+    protected static final byte INS_SECURE_MESSAGE              = (byte)0xB6;
+    protected static final byte INS_CLOSE_CHANNEL               = (byte)0xB7;
 
     /* Commands transmitted over secure channel */
-    private static final byte CMD_ECHO                  = (byte)0x00;
-    private static final byte CMD_RAND                  = (byte)0x01;
-    private static final byte CMD_AUTH                  = (byte)0x02;
-    private static final byte CMD_PIN                   = (byte)0x03;
-    private static final byte CMD_REESTABLISH_SC        = (byte)0x04;
-    private static final byte CMD_WIPE                  = (byte)0x05;
+    protected static final byte CMD_ECHO                  = (byte)0x00;
+    protected static final byte CMD_RAND                  = (byte)0x01;
+    protected static final byte CMD_AUTH                  = (byte)0x02;
+    protected static final byte CMD_PIN                   = (byte)0x03;
+    protected static final byte CMD_REESTABLISH_SC        = (byte)0x04;
+    protected static final byte CMD_WIPE                  = (byte)0x05;
 
     protected static final byte SUBCMD_DEFAULT          = (byte)0x00;
     // pin
-    private static final byte SUBCMD_PIN_STATUS         = (byte)0x00;
-    private static final byte SUBCMD_PIN_UNLOCK         = (byte)0x01;
-    private static final byte SUBCMD_PIN_LOCK           = (byte)0x02;
-    private static final byte SUBCMD_PIN_CHANGE         = (byte)0x03;
-    private static final byte SUBCMD_PIN_SET            = (byte)0x04;
-    private static final byte SUBCMD_PIN_UNSET          = (byte)0x05;
+    protected static final byte SUBCMD_PIN_STATUS         = (byte)0x00;
+    protected static final byte SUBCMD_PIN_UNLOCK         = (byte)0x01;
+    protected static final byte SUBCMD_PIN_LOCK           = (byte)0x02;
+    protected static final byte SUBCMD_PIN_CHANGE         = (byte)0x03;
+    protected static final byte SUBCMD_PIN_SET            = (byte)0x04;
+    protected static final byte SUBCMD_PIN_UNSET          = (byte)0x05;
 
     // status
     protected static final byte STATUS_PIN_NOT_SET      = (byte)0x00;
@@ -128,12 +128,12 @@ public class SecureApplet extends Applet{
     public  static final short LENGTH_TRANSIENT_HEAP    = (short)1024;
 
     /* PIN constants */
-    private static final byte PIN_MAX_LENGTH            = (byte)32;
-    private static final byte PIN_MAX_COUNTER           = (byte)10;
+    protected static final byte PIN_MAX_LENGTH            = (byte)32;
+    protected static final byte PIN_MAX_COUNTER           = (byte)10;
     
-    private PinCode pin;
+    protected PinCode pin;
     // mb better to do via GP somehow?
-    private boolean pinIsSet = false;
+    protected boolean pinIsSet = false;
 
     protected TransientHeap heap;
     protected SecureChannel sc;

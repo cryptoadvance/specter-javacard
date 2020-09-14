@@ -70,6 +70,7 @@ public class Secp256k1 {
     static private KeyAgreement  ecAdd;
     static private Signature     sig;
     static private ECPrivateKey  tempPrivateKey;
+    static private ECPublicKey   tempPublicKey;
     // this one is used for point addition - G changes to arbitrary points
     static private ECPrivateKey  tempPoint;
     static private TransientHeap heap;
@@ -97,6 +98,8 @@ public class Secp256k1 {
         Secp256k1.setCommonCurveParameters(tempPrivateKey);
         tempPoint = (ECPrivateKey)KeyBuilder.buildKey(KeyBuilder.TYPE_EC_FP_PRIVATE, KeyBuilder.LENGTH_EC_FP_256, false);
         Secp256k1.setCommonCurveParameters(tempPoint);
+        tempPublicKey = (ECPublicKey)KeyBuilder.buildKey(KeyBuilder.TYPE_EC_FP_PUBLIC, KeyBuilder.LENGTH_EC_FP_256, false);
+        Secp256k1.setCommonCurveParameters(tempPublicKey);
         // set scalar of the tempPoint to 1
         short len = LENGTH_PRIVATE_KEY;
         short off = heap.allocate(len);
@@ -551,8 +554,8 @@ public class Secp256k1 {
     }
     /**
      * Signs the message with the private key. The message should be already hashed.
-     * @param scalar      - buffer with a scalar ( private key )
-     * @param scalarOff   - offset in the scalar buffer
+     * @param scalar     - buffer with a scalar ( private key )
+     * @param scalarOff  - offset in the scalar buffer
      * @param msg        - buffer with a 32-byte hash to sign
      * @param msgOffset  - offset in the msg buffer
      * @param out        - output buffer to write the signature to
@@ -566,6 +569,44 @@ public class Secp256k1 {
     {
         tempPrivateKey.setS(scalar, scalarOff, LENGTH_PRIVATE_KEY);
         return sign(tempPrivateKey, msg, msgOffset, out, outOffset);
+    }
+    /**
+     * Verifies a signature against the message and the public key
+     * @param pubkey - buffer with the pubkey serialized in uncompressed form
+     * @param pubkeyOff - offset of the pubkey buffer
+     * @param msgBuf - buffer with the message to verify (will be sha256-ed)
+     * @param msgOff - offset in the message buffer
+     * @param sigBuf - buffer with DER-serialized signature
+     * @param sigOff - offset of the signature buffer
+     * @param sigLen - length of the signature in the buffer
+     * @return true if the signature is valid, false otherwise
+     */
+    static public boolean verifyPreimage(
+                    byte[] pubkey, short pubkeyOff,
+                    byte[] msgBuf, short msgOff, short msgLen,
+                    byte[] sigBuf, short sigOff, short sigLen)
+    {
+        tempPublicKey.setW(pubkey, pubkeyOff, LENGTH_PUBLIC_KEY_UNCOMPRESSED);
+        return verifyPreimage(tempPublicKey, msgBuf, msgOff, msgLen, sigBuf, sigOff, sigLen);
+    }
+    /**
+     * Verifies a signature against the message and the public key
+     * @param pubkey - Instance of the ECPublicKey
+     * @param msgBuf - buffer with the message to verify (will be sha256-ed)
+     * @param msgOff - offset in the message buffer
+     * @param sigBuf - buffer with DER-serialized signature
+     * @param sigOff - offset of the signature buffer
+     * @param sigLen - length of the signature in the buffer
+     * @return true if the signature is valid, false otherwise
+     */
+    static public boolean verifyPreimage(
+                    ECPublicKey publicKey,
+                    byte[] msgBuf, short msgOff, short msgLen,
+                    byte[] sigBuf, short sigOff, short sigLen)
+    {
+        sig.init(publicKey, Signature.MODE_VERIFY);
+        return sig.verify(msgBuf, msgOff, msgLen,
+                          sigBuf, sigOff, sigLen);
     }
     /**
      * Generates a random 32-byte secret up to the group order. It is always a valid private key.

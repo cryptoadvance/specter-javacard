@@ -305,7 +305,7 @@ public class BlindOracleApplet extends SecureApplet{
      * @param out        - output buffer to write the xprv to
      * @param outOff     - offset in the output buffer
      */
-    private void derive(byte keyid,
+    protected void derive(byte keyid,
                         byte[] derivation, short derOff, short derLen,
                         byte[] out, short outOff)
     {

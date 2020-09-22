@@ -36,7 +36,7 @@
     <javacard jckit="${JCKIT}">
       <cap output="${cap.dir}/SecureApplet.cap" 
            sources="${src.dir}/toys" 
-           classes="${class.dir}/SecureApplet"
+           classes="${class.dir}/Secure"
            includes="${deps.secureapplet}"
            >
         <applet class="toys.SecureApplet"       aid="B00B5111FF01"/>

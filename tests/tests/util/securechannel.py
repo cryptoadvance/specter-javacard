@@ -11,6 +11,7 @@ class SecureError(Exception):
         self.code = code
 
 class SecureChannel:
+    HMAC_LEN = 14
     def __init__(self, card):
         """Pass Card or Simulator instance here"""
         self.card = card
@@ -59,10 +60,10 @@ class SecureChannel:
             secp256k1.ec_pubkey_tweak_mul(pub, secret)
             shared_secret = hashlib.sha256(secp256k1.ec_pubkey_serialize(pub)[1:33]).digest()
             shared_fingerprint = self.derive_keys(shared_secret)
-            recv_hmac = s.read(15)
+            recv_hmac = s.read(self.HMAC_LEN)
             h = hmac.new(self.card_mac_key, digestmod='sha256')
             h.update(data)
-            expected_hmac = h.digest()[:15]
+            expected_hmac = h.digest()[:self.HMAC_LEN]
             if expected_hmac != recv_hmac:
                 raise RuntimeError("Wrong HMAC. Got %s, expected %s" % (recv_hmac.hex(),expected_hmac.hex()))
             data += recv_hmac
@@ -82,13 +83,13 @@ class SecureChannel:
             res = self.card.request(b"\xB0\xB4\x00\x00"+encode(data))
             s = BytesIO(res)
             nonce_card = s.read(32)
-            recv_hmac = s.read(15)
+            recv_hmac = s.read(self.HMAC_LEN)
             secret_with_nonces = hashlib.sha256(shared_secret+nonce_card).digest()
             shared_fingerprint = self.derive_keys(secret_with_nonces)
             data = nonce_card
             h = hmac.new(self.card_mac_key, digestmod='sha256')
             h.update(data)
-            expected_hmac = h.digest()[:15]
+            expected_hmac = h.digest()[:self.HMAC_LEN]
             if expected_hmac != recv_hmac:
                 raise RuntimeError("Wrong HMAC. Got %s, expected %s"%(recv_hmac.hex(),expected_hmac.hex()))
             data += recv_hmac
@@ -114,17 +115,17 @@ class SecureChannel:
         h = hmac.new(self.host_mac_key, digestmod='sha256')
         h.update(iv)
         h.update(ct)
-        ct += h.digest()[:15]
+        ct += h.digest()[:self.HMAC_LEN]
         return ct
     
     def decrypt(self, ct):
-        recv_hmac = ct[-15:]
-        ct = ct[:-15]
+        recv_hmac = ct[-self.HMAC_LEN:]
+        ct = ct[:-self.HMAC_LEN]
         iv = self.iv.to_bytes(16, 'big')
         h = hmac.new(self.card_mac_key, digestmod='sha256')
         h.update(iv)
         h.update(ct)
-        expected_hmac = h.digest()[:15]
+        expected_hmac = h.digest()[:self.HMAC_LEN]
         if expected_hmac != recv_hmac:
             raise RuntimeError("Wrong HMAC. Got %s, expected %s"%(recv_hmac.hex(),expected_hmac.hex()))
         backend = default_backend()

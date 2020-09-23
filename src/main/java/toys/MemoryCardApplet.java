@@ -37,17 +37,7 @@ public class MemoryCardApplet extends SecureApplet{
     }
     public MemoryCardApplet(){
         super();
-
-        // Default data
-        byte[] defaultData = { 
-            'M', 'e', 'm', 'o', 'r', 'y', ' ', 'c', 
-            'a', 'r', 'd', 's', ' ', 'a', 'r', 'e', 
-            ' ', 'n', 'o', 't', ' ', 's', 'a', 'f', 
-            'u', ' ', 's', 'o', ' ', 'w', 'h', 'a',
-            't', '?'
-        };
         secretData = new DataEntry(MAX_DATA_LENGTH);
-        secretData.put(defaultData, (short)0, (short)defaultData.length);
     }
     protected short processSecureMessage(byte[] buf, short len){
         if(buf[OFFSET_CMD] == CMD_STORAGE){

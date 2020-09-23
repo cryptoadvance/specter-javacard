@@ -2,9 +2,9 @@
 import unittest, os
 from util.securechannel import SecureChannel, SecureError
 
-AID = "B00B5111FF01"
-APPLET = "toys.SecureApplet"
-CLASSDIR = "Secure"
+AID = "B00B5111CB01"
+APPLET = "toys.MemoryCardApplet"
+CLASSDIR = "MemoryCard"
 
 mode = os.environ.get('TEST_MODE', "simulator")
 if mode=="simulator":

@@ -55,3 +55,4 @@ class Simulator:
     def disconnect(self):
         self.s.close()
         self.proc.kill()
+        time.sleep(1)

@@ -28,7 +28,7 @@ public class SecureChannel{
     static final public short MAX_LENGTH_KEY    = (short)32;
     /** Size of the HMAC code used in messages. 
      *  We reduce it to 15 bytes to increase data capacity. */
-    static final public short LENGTH_MAC        = (short)15;
+    static final public short LENGTH_MAC        = (short)14;
     /** Size of the IV for AES */
     static final public short LENGTH_IV         = (short)16;
     /** Maximum size of the cyphertext including MAC */

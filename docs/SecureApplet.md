@@ -40,7 +40,7 @@ Example: `B0B20000` -> returns 65 bytes with static public key of the card, for 
 
 ## Establish secure channel
 
-For secure communication we need to establish shared secrets. For this we use ECDH key agreement. We use `AES_CBC` for encryption with `M2` padding (add `0x8000..00` to round to 16-byte blocks). HMAC-SHA256 is used for authentication and applied to the ciphertext (encrypt-then-hmac).
+For secure communication we need to establish shared secrets. For this we use ECDH key agreement. We use `AES_CBC` for encryption with `M2` padding (add `0x8000..00` to round to 16-byte blocks). Truncated to 14 bytes HMAC-SHA256 is used for authentication and applied to the ciphertext (encrypt-then-hmac).
 
 There are 3 different modes you can use - `ss`, `es` and `ee`.
 - In `ss` mode both card and host use static public keys and 32-byte random nonces. Shared secret is derived as `sha256(ecdh(s,s) | host_nonce | card_nonce)`.
@@ -60,7 +60,7 @@ If you are out of sync for some reason just re-establish secure channel. If `iv`
 
 ## Establish secure channel in SS mode
 
-Returns `< 32-byte card nonce > | HMAC-SHA256(card_key, data) | ECDSA_SIGNATURE`.
+Returns `< 32-byte card nonce > | <14 byte HMAC-SHA256(card_key, data)> | ECDSA_SIGNATURE`.
 
 | Field  | Value                                    |
 | ------ | ---------------------------------------- |
@@ -68,11 +68,11 @@ Returns `< 32-byte card nonce > | HMAC-SHA256(card_key, data) | ECDSA_SIGNATURE`
 | INS    | `0xB3`                                   |
 | P0, P1 | ignored, use for example `0x00` for both |
 | DATA   | `<host_pubkey><host_nonce>`: 65-byte public key of the host serialized in uncompressed form followed by the 32-byte host nonce |
-| RETURN | `SW`: `0x9000`, `DATA`: `< 32-byte card nonce > | HMAC-SHA256(card_key, data) | ECDSA_SIGNATURE`  |
+| RETURN | `SW`: `0x9000`, `DATA`: `< 32-byte card nonce > | < 14 byte HMAC-SHA256(card_key, data)> | ECDSA_SIGNATURE`  |
 
 ## Establish secure channel in ES mode
 
-Returns `< 32-byte card nonce > | HMAC-SHA256(card_key, data) | ECDSA_SIGNATURE`.
+Returns `< 32-byte card nonce > | < 14 byte HMAC-SHA256(card_key, data)> | ECDSA_SIGNATURE`.
 
 | Field  | Value                                    |
 | ------ | ---------------------------------------- |
@@ -80,11 +80,11 @@ Returns `< 32-byte card nonce > | HMAC-SHA256(card_key, data) | ECDSA_SIGNATURE`
 | INS    | `0xB4`                                   |
 | P0, P1 | ignored, use for example `0x00` for both |
 | DATA   | 65-byte public key of the host serialized in uncompressed form |
-| RETURN | `SW`: `0x9000`, `DATA`: `< 32-byte card nonce > | HMAC-SHA256(card_key, data) | ECDSA_SIGNATURE` |
+| RETURN | `SW`: `0x9000`, `DATA`: `< 32-byte card nonce > | < 14 byte HMAC-SHA256(card_key, data)> | ECDSA_SIGNATURE` |
 
 ## Establish secure channel in EE mode
 
-Returns `< card ephemeral pubkey > | HMAC-SHA256(card_key, data) | ECDSA_SIG(card_pubkey, data incl HMAC)`.
+Returns `< card ephemeral pubkey > | < 14 byte HMAC-SHA256(card_key, data)> | ECDSA_SIG(card_pubkey, data incl HMAC)`.
 
 | Field  | Value                                    |
 | ------ | ---------------------------------------- |
@@ -92,7 +92,7 @@ Returns `< card ephemeral pubkey > | HMAC-SHA256(card_key, data) | ECDSA_SIG(car
 | INS    | `0xB5`                                   |
 | P0, P1 | ignored, use for example `0x00` for both |
 | DATA   | 65-byte public key of the host serialized in uncompressed form |
-| RETURN | `SW`: `0x9000`, `DATA`: 65-byte cards fresh pubkey followed by `HMAC-SHA256(card_key, data)`, then ECDSA signature signing all previous data |
+| RETURN | `SW`: `0x9000`, `DATA`: 65-byte cards fresh pubkey followed by `HMAC-SHA256(card_key, data)` (first 14 bytes), then ECDSA signature signing all previous data |
 
 ## Secure message
 
@@ -112,7 +112,7 @@ Message is formed as follows:
 - All messages coming from the host should be encrypted using `host_aes_key` and authenticated with `host_mac_key`
 - All responces from card are encrypted with `card_aes_key` and authenticated with `card_mac_key`
 - `AES-CBC` with `M2` padding (`0x8000...00`) is used to round data to 16-byte AES blocks.
-- For authentication we use first `15` bytes of `HMAC-SHA256(key, iv | ciphertext)`
+- For authentication we use first `14` bytes of `HMAC-SHA256(key, iv | ciphertext)`
 - You need to increase `iv` after every request to the card.
 
 Encrypted packet format: `< ciphertext > < hmac_sha256(key, iv|ciphertext)[:15] >`

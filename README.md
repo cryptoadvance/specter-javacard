@@ -101,11 +101,19 @@ gp -l
 
 Now you can communicate with the applet.
 
-Jupyter notebook with some examples for applets are in [`jupyter/`](jupyter/) folder.
+Check out [tests](./tests/tests) folder to get an idea how to communicate with the card.
 
 # Simulator
 
-Example how to run `BlindOracle` on port `21111` with AID `B00B5111CE01`:
+A simple way to run simulator with a particular applet (MemoryCard for example):
+
+```sh
+python3 run_sim.py MemoryCard
+```
+
+It will spawn the simulator on port `21111` and restart it on every disconnect.
+
+To run `BlindOracle` on port `21111` with AID `B00B5111CE01` directly with `simulator.jar`:
 
 ```sh
 java -jar "simulator.jar" -p 21111 -a "B00B5111CE01" -c "toys.BlindOracleApplet" -u "file://$PWD/build/classes/BlindOracle/"

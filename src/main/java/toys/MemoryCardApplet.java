@@ -11,16 +11,16 @@ import javacard.framework.*;
 public class MemoryCardApplet extends SecureApplet{
 
     // Max storage
-    private static final short MAX_DATA_LENGTH         = (short)255;
+    protected static final short MAX_DATA_LENGTH         = (short)255;
 
     // commands transmitted over secure channel
     // 0x00 - 0x04 are reserved
-    private static final byte CMD_STORAGE             = (byte)0x05;
+    protected static final byte CMD_STORAGE             = (byte)0x05;
     // storage
-    private static final byte SUBCMD_STORAGE_GET      = (byte)0x00;
-    private static final byte SUBCMD_STORAGE_PUT      = (byte)0x01;
+    protected static final byte SUBCMD_STORAGE_GET      = (byte)0x00;
+    protected static final byte SUBCMD_STORAGE_PUT      = (byte)0x01;
 
-    private DataEntry secretData;
+    protected DataEntry secretData;
 
     // Create an instance of the Applet subclass using its constructor, 
     // and to register the instance.
@@ -47,7 +47,7 @@ public class MemoryCardApplet extends SecureApplet{
         }
         return 0;
     }
-    private short processStorageCommand(byte[] buf, short len){
+    protected short processStorageCommand(byte[] buf, short len){
         if(isLocked()){
             ISOException.throwIt(ERR_CARD_LOCKED);
         }
@@ -66,7 +66,7 @@ public class MemoryCardApplet extends SecureApplet{
         }
         return lenOut;
     }
-    private short fillData(byte[] buf, short off){
+    protected short fillData(byte[] buf, short off){
         Util.arrayCopyNonAtomic(secretData.get(), (short)0, buf, off, secretData.length());
         return secretData.length();
     }

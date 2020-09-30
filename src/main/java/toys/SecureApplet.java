@@ -105,7 +105,7 @@ public class SecureApplet extends Applet{
 
     /* Generic constants */
     /** length of random data for CMD_RAND command */
-    private static final short LENGTH_RANDOM_DATA       = (short)32;
+    protected static final short LENGTH_RANDOM_DATA       = (short)32;
     /** offset of non-secure responce payload */
     public  static final short OFFSET_PLAIN_PAYLOAD     = (short)0;
     /** length of CMD+SUBCMD */
@@ -261,7 +261,7 @@ public class SecureApplet extends Applet{
         apdu.sendBytesLong(buf, (short)0, len);
     }
     /** Puts unique public key of the card to the message buffer */
-    private short fillCardPubkey(byte[] buf, short off){
+    protected short fillCardPubkey(byte[] buf, short off){
         return sc.serializeStaticPublicKey(buf, off);
     }
     /**
@@ -275,7 +275,7 @@ public class SecureApplet extends Applet{
      * @param outOff - offset in the output buffer
      * @return number of bytes written into the output buffer 
      */
-    private short openChannelSS(byte[] msg, short msgOff, short msgLen, byte[] out, short outOff){
+    protected short openChannelSS(byte[] msg, short msgOff, short msgLen, byte[] out, short outOff){
         // check if data length is ok
         if(msgLen != (short)(SecureChannel.LENGTH_NONCE + Secp256k1.LENGTH_PUBLIC_KEY_UNCOMPRESSED)){
             ISOException.throwIt(ISO7816.SW_WRONG_LENGTH);
@@ -300,7 +300,7 @@ public class SecureApplet extends Applet{
      * @param outOff - offset in the output buffer
      * @return number of bytes written into the output buffer 
      */
-    private short openChannelES(byte[] msg, short msgOff, short msgLen, byte[] out, short outOff){
+    protected short openChannelES(byte[] msg, short msgOff, short msgLen, byte[] out, short outOff){
         // check if data length is ok
         if(msgLen != Secp256k1.LENGTH_PUBLIC_KEY_UNCOMPRESSED){
             ISOException.throwIt(ISO7816.SW_WRONG_LENGTH);
@@ -324,7 +324,7 @@ public class SecureApplet extends Applet{
      * @param outOff - offset in the output buffer
      * @return number of bytes written into the output buffer 
      */
-    private short openChannelEE(byte[] msg, short msgOff, short msgLen, byte[] out, short outOff){
+    protected short openChannelEE(byte[] msg, short msgOff, short msgLen, byte[] out, short outOff){
         // check if data length is ok
         if(msgLen != Secp256k1.LENGTH_PUBLIC_KEY_UNCOMPRESSED){
             ISOException.throwIt(ISO7816.SW_WRONG_LENGTH);
@@ -337,7 +337,7 @@ public class SecureApplet extends Applet{
         len += sc.signData(out, outOff, len, out, (short)(outOff+len));
         return len;
     }
-    private short handleSecureMessage(byte[] msg, short msgOff, short msgLen){
+    protected short handleSecureMessage(byte[] msg, short msgOff, short msgLen){
         short len = sc.decryptMessage(msg, (short)(msgOff+OFFSET_SECURE_MESSAGE), msgLen,
                                       msg, OFFSET_SECURE_MESSAGE);
         try{
@@ -354,7 +354,7 @@ public class SecureApplet extends Applet{
         // encrypt buffer and send to the host
         return sc.encryptMessage(msg, OFFSET_SECURE_MESSAGE, len, msg, OFFSET_SECURE_MESSAGE);
     }
-    private short preprocessSecureMessage(byte[] buf, short len){
+    protected short preprocessSecureMessage(byte[] buf, short len){
         if(len < LENGTH_CMD_SUBCMD){
             ISOException.throwIt(ERR_INVALID_LEN);
         }
@@ -400,12 +400,12 @@ public class SecureApplet extends Applet{
      * @param len    - length of the command
      * @return number of bytes to send
      */
-    private short setEcho(byte[] buf, short len){
+    protected short setEcho(byte[] buf, short len){
         // just replace CMD and keep the data the same
         setResponseCode(RESPONSE_SUCCESS, buf);
         return len;
     }
-    private short processPinCommand(byte[] buf, short len){
+    protected short processPinCommand(byte[] buf, short len){
         byte subcmd = buf[OFFSET_SUBCMD];
         short lenOut = setResponseCode(RESPONSE_SUCCESS, buf);
         switch(subcmd){
@@ -500,7 +500,7 @@ public class SecureApplet extends Applet{
             pin.reset();
         }
     }
-    private short fillPinStatus(byte[] buf, short offset){
+    protected short fillPinStatus(byte[] buf, short offset){
         short out = offset;
         if(!pinIsSet){
             buf[out++] = PIN_MAX_COUNTER;
@@ -541,7 +541,7 @@ public class SecureApplet extends Applet{
      * @param len - length of random data
      * @return number of bytes written to the buffer
      */
-    private short fillRandom(byte[] buf, short off, short len){
+    protected short fillRandom(byte[] buf, short off, short len){
         // fill buffer with 32 bytes of random data
         Crypto.random.generateData(buf, off, len);
         return len;

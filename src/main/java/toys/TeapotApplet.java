@@ -16,16 +16,16 @@ import javacard.framework.*;
  */
 public class TeapotApplet extends Applet{
     /** Class code for Teapot applet */
-    private static final byte CLA_TEAPOT               = (byte)0xB0;
+    protected static final byte CLA_TEAPOT               = (byte)0xB0;
     /** Instruction code to get data from the card */
-    private static final byte INS_GET                  = (byte)0xA1;
+    protected static final byte INS_GET                  = (byte)0xA1;
     /** Instruction code to save data on the card */
-    private static final byte INS_PUT                  = (byte)0xA2;
+    protected static final byte INS_PUT                  = (byte)0xA2;
     /** Max storage capacity. We use 254 to fit in one APDU buffer. */
-    private static final short MAX_DATA_LENGTH         = (short)254;
+    protected static final short MAX_DATA_LENGTH         = (short)254;
 
     /** Data stored on the card, up to `MAX_DATA_LENGTH` in length */
-    private DataEntry data = null;
+    protected DataEntry data = null;
 
     /** 
      * Create an instance of the TeapotApplet using its constructor, 
@@ -107,7 +107,7 @@ public class TeapotApplet extends Applet{
      * Stores data on the card and then sends updated data as a responce
      * @param apdu the APDU command containing data to store
      */
-    private void StoreData(APDU apdu){
+    protected void StoreData(APDU apdu){
         byte[] buf = apdu.getBuffer();
         short len = Util.makeShort((byte)0, buf[ISO7816.OFFSET_LC]);
         // check if data length is ok,
@@ -125,7 +125,7 @@ public class TeapotApplet extends Applet{
      * Sends data from the card in APDU responce
      * @param apdu the APDU command where we will put the result.
      */
-    private void SendData(APDU apdu){
+    protected void SendData(APDU apdu){
         apdu.setOutgoing();
         apdu.setOutgoingLength(data.length());
         apdu.sendBytesLong(data.get(), (short)0, data.length());

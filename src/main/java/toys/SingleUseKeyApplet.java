@@ -13,24 +13,24 @@ public class SingleUseKeyApplet extends SecureApplet{
 
     // commands transmitted over secure channel
     // 0x00 - 0x04 are reserved
-    private static final byte CMD_SINGLE_USE_KEY      = (byte)0x20;
+    protected static final byte CMD_SINGLE_USE_KEY      = (byte)0x20;
     // instructions for plaintext
-    private static final byte INS_SINGLE_USE_KEY      = (byte)0xA0;
+    protected static final byte INS_SINGLE_USE_KEY      = (byte)0xA0;
 
     /************ key management *********/
 
     // generates a new random key
     // can be used for signing only once
-    private static final byte SUBCMD_SINGLE_USE_KEY_GENERATE   = (byte)0x00;
+    protected static final byte SUBCMD_SINGLE_USE_KEY_GENERATE   = (byte)0x00;
     // get corresponding public key
     // use this key to construct the transaction
-    private static final byte SUBCMD_SINGLE_USE_KEY_GET_PUBKEY = (byte)0x01;
+    protected static final byte SUBCMD_SINGLE_USE_KEY_GET_PUBKEY = (byte)0x01;
     // sign hash with private key
     // instantly deletes the key after usage
-    private static final byte SUBCMD_SINGLE_USE_KEY_SIGN       = (byte)0x02;
+    protected static final byte SUBCMD_SINGLE_USE_KEY_SIGN       = (byte)0x02;
 
-    private KeyPair singleUseKeyPair;
-    private byte[] tempBuf;
+    protected KeyPair singleUseKeyPair;
+    protected byte[] tempBuf;
 
     // Create an instance of the Applet subclass using its constructor, 
     // and to register the instance.
@@ -89,7 +89,7 @@ public class SingleUseKeyApplet extends SecureApplet{
         }
         return 0;
     }
-    private short processSingleUseKeyCommand(byte[] buf, short len){
+    protected short processSingleUseKeyCommand(byte[] buf, short len){
         if(isLocked()){
             ISOException.throwIt(ERR_CARD_LOCKED);
         }
@@ -116,7 +116,7 @@ public class SingleUseKeyApplet extends SecureApplet{
         }
         return lenOut;
     }
-    private void generateRandomKey(){
+    protected void generateRandomKey(){
         Secp256k1.generateRandomSecret(tempBuf, (short)0);
         ECPrivateKey prv = (ECPrivateKey)singleUseKeyPair.getPrivate();
         prv.setS(tempBuf, (short)0, (short)32);

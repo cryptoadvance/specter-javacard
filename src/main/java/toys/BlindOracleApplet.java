@@ -133,7 +133,7 @@ public class BlindOracleApplet extends SecureApplet{
      * @param seefOff - offset of the seed in the buffer
      * @param seedLen - length of the seed
      */
-    private void genKeyFromSeed(byte[] seed, short seedOff, short seedLen){
+    protected void genKeyFromSeed(byte[] seed, short seedOff, short seedLen){
         // check it's between 16 and 64 bytes
         if( (seedLen < SEED_LEN_MIN) || (seedLen > SEED_LEN_MAX))
         {
@@ -226,7 +226,7 @@ public class BlindOracleApplet extends SecureApplet{
      * Helper function to copy root key to child.
      * This is called when new root key is imported.
      */
-    private void copyRootToChild(){
+    protected void copyRootToChild(){
         Util.arrayCopyNonAtomic(rootPrv, (short)0,
                                 childPrv, (short)0,
                                 PRVKEY_LEN);
@@ -244,7 +244,7 @@ public class BlindOracleApplet extends SecureApplet{
      * @param out     - output buffer to write data to
      * @param outOff  - offset in the output buffer
      */
-    private void xprvChild(byte[] xprv, short xprvOff,
+    protected void xprvChild(byte[] xprv, short xprvOff,
                            byte[] idx,  short idxOff,
                            byte[] out,  short outOff)
     {

@@ -125,7 +125,7 @@ public class SecureApplet extends Applet{
     /** offset of the complete decrypted message */
     public  static final short OFFSET_SECURE_MESSAGE    = (short)0;
     /** length of transient heap */
-    public  static final short LENGTH_TRANSIENT_HEAP    = (short)1024;
+    public  static final short LENGTH_TRANSIENT_HEAP    = (short)768;
 
     /* PIN constants */
     protected static final byte PIN_MAX_LENGTH            = (byte)32;

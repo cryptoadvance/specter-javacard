@@ -17,6 +17,9 @@ if __name__ == '__main__':
         print(f"Usage:    {sys.argv[0]} applet [aid]")
         print(f"Examples: {sys.argv[0]} BlindOracle")
         print(f"          {sys.argv[0]} BlindOracle B00B5111CE01")
+        print( "Known applets:")
+        for k in aids:
+            print(f"  {k: <10}\t{aids.get(k)}")
         sys.exit(1)
     applet = sys.argv[1]
     aid = None

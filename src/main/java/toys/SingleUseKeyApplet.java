@@ -54,6 +54,7 @@ public class SingleUseKeyApplet extends SecureApplet{
     // ok, if you want to use it without secure communication 
     // - you should be able to, even though it might be an issue with MITM
     // if you don't - comment out this function
+    @SuppressWarnings("fallthrough")
     protected short processPlainMessage(byte[] buf, short len){
         // ugly copy-paste for now
         switch (buf[ISO7816.OFFSET_INS]){
@@ -61,9 +62,6 @@ public class SingleUseKeyApplet extends SecureApplet{
                 switch (buf[ISO7816.OFFSET_P1]){
                     case SUBCMD_SINGLE_USE_KEY_GENERATE:
                         generateRandomKey();
-                        // no need to break - we return compressed pubkey
-                        // but compiler complains, so
-                        return Secp256k1.serialize((ECPublicKey)singleUseKeyPair.getPublic(), true, buf, OFFSET_PLAIN_PAYLOAD);
                     case SUBCMD_SINGLE_USE_KEY_GET_PUBKEY:
                         // serialize pubkey in compressed form
                         return Secp256k1.serialize((ECPublicKey)singleUseKeyPair.getPublic(), true, buf, OFFSET_PLAIN_PAYLOAD);
@@ -89,6 +87,7 @@ public class SingleUseKeyApplet extends SecureApplet{
         }
         return 0;
     }
+    @SuppressWarnings("fallthrough")
     protected short processSingleUseKeyCommand(byte[] buf, short len){
         if(isLocked()){
             ISOException.throwIt(ERR_CARD_LOCKED);
@@ -98,10 +97,6 @@ public class SingleUseKeyApplet extends SecureApplet{
         switch (subcmd){
             case SUBCMD_SINGLE_USE_KEY_GENERATE:
                 generateRandomKey();
-                // no need to break - we return compressed pubkey
-                // but compiler complains, so
-                lenOut += Secp256k1.serialize((ECPublicKey)singleUseKeyPair.getPublic(), true, buf, OFFSET_SECURE_PAYLOAD);
-                return lenOut;
             case SUBCMD_SINGLE_USE_KEY_GET_PUBKEY:
                 // serialize pubkey in compressed form
                 lenOut += Secp256k1.serialize((ECPublicKey)singleUseKeyPair.getPublic(), true, buf, OFFSET_SECURE_PAYLOAD);

@@ -78,7 +78,7 @@ You should get `.cap` files for all the applets in the `build/cap` folder.
 Run to compile a specific applet:
 
 ```sh
-ant Teapot
+ant MemoryCard
 ```
 
 To see the build targets:

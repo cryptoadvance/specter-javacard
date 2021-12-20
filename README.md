@@ -26,7 +26,7 @@ Install deps:
 
 ```sh
 brew tap adoptopenjdk/openjdk
-brew cask install adoptopenjdk/openjdk/adoptopenjdk8
+brew install --cask adoptopenjdk/openjdk/adoptopenjdk8
 brew install ant@1.9
 ```
 

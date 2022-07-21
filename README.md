@@ -121,6 +121,7 @@ java -jar "simulator.jar" -p 21111 -a "B00B5111CE01" -c "toys.BlindOracleApplet"
 
 # Useful links
 
+- https://www.youtube.com/watch?v=aZtQqJHVfWQ
 - https://github.com/OpenCryptoProject/JCMathLib - library for arbitrary elliptic curve operations on javacard
 - https://opencryptojc.org/ - making JavaCards open
 - https://pyscard.sourceforge.io/ - python tool to talk to smartcards

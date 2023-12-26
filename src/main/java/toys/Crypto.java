@@ -97,6 +97,6 @@ public class Crypto{
         }
         // get our memory back
         heap.free(len);
-        return (short)hash.getLength();
+        return hash.getLength();
     }
 }

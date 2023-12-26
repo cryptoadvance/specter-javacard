@@ -32,7 +32,7 @@ public class PinCode extends OwnerPIN{
     }
     public boolean check(byte[] buf, short off, byte len){
         Crypto.hmacSha256.init(secret, (short)0, (short)secret.length);
-        short lenHmac = Crypto.hmacSha256.doFinal(buf, off, (short)len, hmacResult, (short)0);
+        short lenHmac = Crypto.hmacSha256.doFinal(buf, off, len, hmacResult, (short)0);
         boolean result = super.check(hmacResult, (short)0, (byte)lenHmac);
         // empty array
         Util.arrayFillNonAtomic(hmacResult, (short)0, (short)hmacResult.length, (byte)0x00);
@@ -40,7 +40,7 @@ public class PinCode extends OwnerPIN{
     }
     public void update(byte[] buf, short off, byte len){
         Crypto.hmacSha256.init(secret, (short)0, (short)secret.length);
-        short lenHmac = Crypto.hmacSha256.doFinal(buf, off, (short)len, hmacResult, (short)0);
+        short lenHmac = Crypto.hmacSha256.doFinal(buf, off, len, hmacResult, (short)0);
         super.update(hmacResult, (short)0, (byte)lenHmac);
         // empty array
         Util.arrayFillNonAtomic(hmacResult, (short)0, (short)hmacResult.length, (byte)0x00);

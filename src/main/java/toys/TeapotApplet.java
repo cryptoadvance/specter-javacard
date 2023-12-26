@@ -116,7 +116,7 @@ public class TeapotApplet extends Applet{
             ISOException.throwIt(ISO7816.SW_WRONG_LENGTH);
         }
         // copy content of the buffer to the data array
-        data.put(buf, (short)ISO7816.OFFSET_CDATA, len);
+        data.put(buf, ISO7816.OFFSET_CDATA, len);
         // send back data stored in flash
         SendData(apdu);
     }

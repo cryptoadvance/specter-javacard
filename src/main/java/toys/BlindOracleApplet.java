@@ -88,7 +88,7 @@ public class BlindOracleApplet extends SecureApplet{
         // the JCRE calls the Applet.install method.
         if(bArray!=null && bArray.length > 0){
             // the line below works on the card, but not in the simulator
-            new BlindOracleApplet().register(bArray, (short) (bOffset + 1), bArray[bOffset]);;
+            new BlindOracleApplet().register(bArray, (short) (bOffset + 1), bArray[bOffset]);
         }else{
             // keep the simulator happy and register without arguments
             new BlindOracleApplet().register();

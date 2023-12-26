@@ -132,7 +132,7 @@ public class SecureChannel{
         // add card nonce
         Crypto.random.generateData(cardNonce, cardNonceOff, LENGTH_NONCE);
         Crypto.sha256.doFinal(cardNonce, cardNonceOff, LENGTH_NONCE, heap.buffer, off);
-        openChannel(heap.buffer, off, (short)Crypto.sha256.getLength());
+        openChannel(heap.buffer, off, Crypto.sha256.getLength());
         heap.free(len);
         return LENGTH_NONCE;
     }
@@ -163,7 +163,7 @@ public class SecureChannel{
         // add card nonce
         Crypto.random.generateData(cardNonce, cardNonceOff, LENGTH_NONCE);
         Crypto.sha256.doFinal(cardNonce, cardNonceOff, LENGTH_NONCE, heap.buffer, off);
-        openChannel(heap.buffer, off, (short)Crypto.sha256.getLength());
+        openChannel(heap.buffer, off, Crypto.sha256.getLength());
         heap.free(len);
         return LENGTH_NONCE;
     }
@@ -194,7 +194,7 @@ public class SecureChannel{
         // calculating shared secret
         Crypto.sha256.reset();
         Crypto.sha256.doFinal(heap.buffer, off, ecdhLen, heap.buffer, off);
-        openChannel(heap.buffer, off, (short)Crypto.sha256.getLength());
+        openChannel(heap.buffer, off, Crypto.sha256.getLength());
         heap.free(len);
         // pubkey is just ECDH of private key with G
         return Secp256k1.getPublicKey( ephemeralPrivateKey, false,
@@ -284,7 +284,7 @@ public class SecureChannel{
     public short signData(byte[] data, short dataOffset, short dataLen, 
                           byte[] out, short outOffset)
     {
-        short len = (short)Crypto.sha256.getLength();
+        short len = Crypto.sha256.getLength();
         short off = heap.allocate(len);
 
         Crypto.sha256.reset();
